@@ -3,7 +3,7 @@ import { ShoppingCart, User, Search } from "lucide-react";
 
 function Navbar() {
   return (
-    <nav className="w-full bg-red-500 text-black shadow-md">
+    <nav className="w-full bg-blue-400 text-white shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         {/* Logo */}
         <div className="text-2xl font-bold tracking-wide cursor-pointer">
@@ -12,10 +12,10 @@ function Navbar() {
 
         {/* Navigation Links */}
         <ul className="hidden md:flex space-x-8 text-sm font-medium">
-          <li className="hover:text-gray-200 cursor-pointer transition">Home</li>
-          <li className="hover:text-gray-200 cursor-pointer transition">Products</li>
-          <li className="hover:text-gray-200 cursor-pointer transition">About</li>
-          <li className="hover:text-gray-200 cursor-pointer transition">Contact</li>
+          <li className="hover:bg-black cursor-pointer transition">Home</li>
+          <li className="hover:bg-black cursor-pointer transition">Products</li>
+          <li className="hover:bg-black cursor-pointer transition">About</li>
+          <li className="hover:bg-black cursor-pointer transition">Contact</li>
         </ul>
 
         {/* Search Bar + Icons */}
@@ -29,8 +29,8 @@ function Navbar() {
             />
           </div>
 
-          <User size={22} className="cursor-pointer hover:text-gray-200" />
-          <ShoppingCart size={22} className="cursor-pointer hover:text-gray-200" />
+          <User size={22} className="cursor-pointer hover:bg-black" />
+          <ShoppingCart size={22} className="cursor-pointer hover:bg-black" />
         </div>
       </div>
     </nav>
