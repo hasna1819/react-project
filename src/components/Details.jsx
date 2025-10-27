@@ -5,7 +5,7 @@ function Details() {
     const [Product , SetProduct] =useState({})
     const {id}=useParams()
     const GetData=async() => {
-        let res =await fetch (`https://fakestoreapi.com/products/${id}`)
+        let res =await fetch (`http://localhost:8080/user}`)
         let data = await res.json ()
         SetProduct (data) 
     }

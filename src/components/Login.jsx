@@ -7,7 +7,7 @@ function Login() {
         <h1 className="text-2xl font-bold mb-4">Welcome Back</h1>
      <input type="text" placeholder='Email adress' className="w-[80%] h-[3rem] border-1 border-gray-400 rounded-xl py-1.5 px-3" /> <br />
      <input type="text" placeholder='password' className="w-[80%] h-[3rem] border-1 border-gray-400 rounded-xl py-1.5 px-5" /> <br />
-     <button className="text-black hover:bg-blue-400 cursor-pointer transition rounded-2xl py-2 px-8npm r ">
+     <button className="text-black hover:bg-blue-400 cursor-pointer transition rounded-2xl py-=2 px-8npm r ">
         Login</button>
           <a href="https://www.youtube.com" className='text-black no-underline hover:underline hover:decoration-black-500'>Forgotten account?</a>
          
