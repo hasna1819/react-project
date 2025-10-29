@@ -1,7 +1,7 @@
 import React ,{ useEffect, useState }from "react";
 import Navbar from "./components/Navbar.jsx";
 import Card  from "./components/Card.jsx";
-function Home() {
+function product() {
     const [products, setProducts] = useState([]);
 
     const getdata = async() => {
@@ -30,4 +30,4 @@ function Home() {
   )
 }
 
-export default Home
+export default product

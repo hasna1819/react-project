@@ -17,7 +17,7 @@ function Addtocart() {
                 id: id,
                 title:title,
                 price:price,
-                image:image
+                image:image,
             })
         })
 
@@ -45,7 +45,7 @@ function Addtocart() {
                   
                 </div>
             </div>
-
+          
         </div>
     )
 }

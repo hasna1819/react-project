@@ -17,7 +17,7 @@ function Card({ id, title, price, image }) {
       </h2>
       
       <p className="text-xl font-bold text-blue-600 mb-4">
-        ${price}
+        {price}
       </p>
       
       <div className="flex gap-2">
