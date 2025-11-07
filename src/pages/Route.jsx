@@ -1,11 +1,12 @@
  import React from 'react'
  import {BrowserRouter,Route,Routes} from 'react-router-dom'
  import Product from "./product";
- import Details from './components/Details';
- import Login from './components/Login';
- import Addtocart from './aDDTOCART.JSX';
- import Home from './components/Home';
- import Table from './Table';
+ import Details from '../components/Details.jsx';
+ import Login from '../components/Login.jsx';
+ import Addtocart from './Addtocart.jsx';
+ import Home from '../components/Home.jsx';
+ import Table from './Table.jsx';
+ import CategoryPage from './CategoryPage.jsx';
  
 
  export default function Router() {
@@ -19,6 +20,7 @@
         <Route path="/Addtocart" element={<Addtocart/>} />
         <Route path="/Home" element={<Home/>} />
         <Route path="/Table" element={<Table/>} />
+        <Route path='/CategoryPage' element={<CategoryPage/>} />
      </Routes>
      </BrowserRouter>
      </>

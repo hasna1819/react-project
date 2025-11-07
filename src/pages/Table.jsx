@@ -71,6 +71,20 @@ function Table() {
         alert("product deleted");
        }
       };
+      // Delete a product
+      const deleteProduct = async (id) => {
+        const confirmdelete =window.confirm("Are you sure you want to delete");
+        if (!confirmDelete) return;
+        try {
+          const res =await fetch(`${user}/${id}`, {method: "Delete" });
+          if (!res.ok) throw new Error("failed to delete product");
+
+          setProducts((prev) => prev.filter((p) => p._id !==id));
+        }catch (error) {
+          console.error(error);
+          alert("Error deleting product");
+        }
+      };
       useEffect(() => {
         fetchproducts();
       },[]);

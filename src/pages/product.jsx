@@ -1,6 +1,6 @@
 import React ,{ useEffect, useState }from "react";
-import Navbar from "./components/Navbar.jsx";
-import Card  from "./components/Card.jsx";
+import Navbar from "../components/Navbar.jsx";
+import Card  from "../components/Card.jsx";
 function product() {
     const [products, setProducts] = useState([]);
 

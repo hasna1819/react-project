@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <nav className="w-full bg-blue-400 text-white shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-        {/* Logo */}
+        {/* Logo */}j
         <div className="text-2xl font-bold tracking-wide cursor-pointer">
           ShopEase
         </div>
