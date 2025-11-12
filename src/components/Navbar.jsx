@@ -7,7 +7,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         {/* Logo */}j
         <div className="text-2xl font-bold tracking-wide cursor-pointer">
-          ShopEase
+          Shopeaze
         </div>
 
         {/* Navigation Links */}

@@ -2,19 +2,16 @@ import React, { useEffect, useState } from "react";
 import { TiDelete } from "react-icons/ti";
 
 function CategoryPage() {
-  const apiUrl = "http://localhost:8080/category";
+  const user = "http://localhost:8080/category";
 
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    image: "",
-  });
+  const [form, setForm] = useState({ title: "", image: "" });
   const [loading, setLoading] = useState(false);
 
-  // Fetch all products (categories)
+  // 🔹 Fetch all categories
   const fetchProducts = async () => {
     try {
-      const res = await fetch(apiUrl);
+      const res = await fetch(user);
       const data = await res.json();
       setProducts(data);
     } catch (error) {
@@ -22,14 +19,15 @@ function CategoryPage() {
     }
   };
 
-  // Handle input changes
+  // 🔹 Handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Add new product (category)
+  // 🔹 Add a new category
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!form.title || !form.image) {
       alert("Please fill all fields");
       return;
@@ -37,7 +35,7 @@ function CategoryPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(apiUrl, {
+      const res = await fetch(user, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -48,7 +46,7 @@ function CategoryPage() {
       let data;
       const contentType = res.headers.get("content-type");
 
-      // ✅ Safely parse JSON or fallback to text
+      // Safely parse JSON or fallback to text
       if (contentType && contentType.includes("application/json")) {
         data = await res.json();
       } else {
@@ -66,27 +64,33 @@ function CategoryPage() {
       console.error("Error adding product:", error);
       alert("Error adding product");
     }
+
     setLoading(false);
   };
 
-  // Delete a product
+  // 🔹 Delete a category
   const deleteProduct = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setProducts(products.filter((p) => p._id !== id));
-      } else {
-        alert("Failed to delete product");
-      }
+      const res = await fetch(`${user}/${id}`, { method: "DELETE" });
+
+      // Log response status and body for debugging
+      console.log(`DELETE response status: ${res.status}`);
+      const responseText = await res.text();
+      console.log("DELETE response body:", responseText);
+
+      if (!res.ok) throw new Error("Failed to delete product");
+
+      setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
       alert("Error deleting product");
     }
   };
 
+  // 🔹 Load categories on mount
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -97,7 +101,7 @@ function CategoryPage() {
         Category Manager
       </h1>
 
-      {/* Add Product Form */}
+      {/* 🟩 Add Category Form */}
       <form
         onSubmit={handleSubmit}
         className="w-[90%] md:w-[70%] lg:w-[60%] bg-white shadow-lg rounded-lg p-6 mb-10"
@@ -135,7 +139,7 @@ function CategoryPage() {
         </button>
       </form>
 
-      {/* Product Table */}
+      {/* 🟦 Category Table */}
       <div className="w-[90%] md:w-[80%] lg:w-[70%] bg-white shadow-xl rounded-lg overflow-hidden">
         <table className="w-full border-collapse">
           <thead className="bg-indigo-600 text-white">
@@ -146,6 +150,7 @@ function CategoryPage() {
               <th className="px-4 py-3 text-center">Action</th>
             </tr>
           </thead>
+
           <tbody>
             {products.length > 0 ? (
               products.map((product, index) => (
@@ -183,7 +188,7 @@ function CategoryPage() {
                   colSpan="4"
                   className="text-center py-6 text-gray-500 font-medium"
                 >
-                  No Products Found
+                  No Categories Found
                 </td>
               </tr>
             )}

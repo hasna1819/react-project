@@ -5,7 +5,7 @@
  import Login from '../components/Login.jsx';
  import Addtocart from './Addtocart.jsx';
  import Home from '../components/Home.jsx';
- import Table from './Table.jsx';
+import ProductTable from './productTable.jsx';
  import CategoryPage from './CategoryPage.jsx';
  
 
@@ -19,7 +19,7 @@
         <Route path="/Login" element={<Login/>} />
         <Route path="/Addtocart" element={<Addtocart/>} />
         <Route path="/Home" element={<Home/>} />
-        <Route path="/Table" element={<Table/>} />
+        <Route path="/ProductTable" element={<ProductTable/>} />
         <Route path='/CategoryPage' element={<CategoryPage/>} />
      </Routes>
      </BrowserRouter>

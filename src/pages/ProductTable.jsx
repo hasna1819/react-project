@@ -1,6 +1,6 @@
 import React, {  useEffect, useState } from 'react'
 import { TiDelete } from "react-icons/ti";
-function Table() {
+function ProductTable() {
   const [products, setProducts]= useState([]);
   const [form,setForm]= useState({
     title: "",
@@ -207,4 +207,4 @@ function Table() {
     
 
 
-export default Table ;
+export default ProductTable ;
