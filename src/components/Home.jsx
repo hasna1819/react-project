@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CiSearch } from "react-icons/ci";
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [ Categories, setCategories ] = useState([]);
@@ -13,7 +13,7 @@ function Home() {
     const fetchData = async () => {
       try {
         const [catRes, prodRes] = await Promise.all([
-          fetch("http://localhost:8080/user/category"),
+          fetch("http://localhost:8080/category"),
           fetch("http://localhost:8080/user"),
         ]);
 
@@ -23,8 +23,10 @@ function Home() {
         ]);
 
         setCategories(catData);
-        setproducts(prodData);
+        setProducts(prodData);
       } catch (err) {
+        console.error ("error fetching data:", err)
+      } finally {
         setLoading(false);
       }
     };
@@ -33,15 +35,16 @@ function Home() {
   return (
    <div className="w-full min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white font-sans">
     {/* Navbar */}
-    <nav className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to indigo-600 text-white flex-col md:flex-row justify-between items-center px-8 py-4 shadow-lg">
+    <nav className="w-full bg-blue-500  text-white flex flex-col md:flex-row justify-between items-center px-8 py-4 shadow-lg">
       <h1 className="text-3xl font-bold tracking-wide mb-2 md:mb-0">
         <span className="text-yellow-300"> Shopeaze</span>
       </h1>
 
     <input type="text"
-    placeholder= 'Search amazing products...'
+    placeholder= '🔍Search amazing products...'
      className="w-full md:w-[35%] p-2 rounded-md text-black bg-white placeholder:-gray-500 outline-none shadow-sm"/>
-     
+       
+
 
      <ul className="flex gap-8 mt-3 md:mt-0 text-lg font-medium">
       {["Home", "Products", "Cart", "profile",].map((item) => (
@@ -67,7 +70,7 @@ function Home() {
           place!
         </p>
         <button className="bg-blue-600 hover:700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-           Shop Now
+          🛒 Shop Now
         </button>
         </div>
 
@@ -85,9 +88,12 @@ function Home() {
     ): Categories.length === 0 ? (
       <p className="text-center text-gray-500">No categories available</p>
     ):(
+
+      
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
         {Categories.map((cat) => (
-          <div
+          <Link
+          to={`/ProductDetail/${cat._id}`}
           key={cat._id} 
           className="flex flex-col items-center p=-4 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105">
             <img 
@@ -98,7 +104,7 @@ function Home() {
               <h4 className="text-md font-semibold text-gray-700">
                 {cat.title}
               </h4>
-          </div>
+          </Link>
         ))}
       </div>
     )}
@@ -112,7 +118,7 @@ function Home() {
     ): products.length === 0 ? (
       <p className="text-center text-gray-500">No products available</p>
     ):(
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-10">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
         {Categories.map((item) => (
           <div
           key={item._id} 
@@ -123,14 +129,41 @@ function Home() {
                    className='rounded-t-xl w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300'
                     loading="lazy"
              />
-              <h4 className="text-lg font-semibold text-gray-800 mb-1">
+             <div className="p-5">
+               <h4 className="text-lg font-semibold text-gray-800 mb-1">
                 {item.title}
               </h4>
+             </div>
+              <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                {item.description}
+              </p>
+              <p className="text-blue-600 font-semibold text-lg">
+                ₹ {item.price}
+              </p>
+              <p className="text-blue-600 font-semibold text-lg">
+                {item?.category?.title??"no category"}
+              </p>
+              <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition-all duration-300">
+                Add to Cart
+              </button>
           </div>
         ))}
       </div>
     )}
     </section>
+
+     {/* Footer */}
+
+     <footer className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white text-center py-6 mt-auto">
+      <p className="text-sm">
+        {new Date().getFullYear()} <b>Shopeaze</b>. All rights reserved
+      </p>
+      <div className="flex justify-center gap-5 mt-3 text-lg">
+        <i className="fa-brands fa-facebook hover:text-yellow-300 transition"></i>
+       <i className="fa-brands fa-instagram hover:text-yellow-300 transition"></i>
+        <i className="fa-brands fa-twitter hover:text-yellow-300 transition"></i>
+      </div>
+     </footer>
    </div>
   )
 }
