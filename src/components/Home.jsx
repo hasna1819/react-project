@@ -111,7 +111,7 @@ function Home() {
     </section>
     {/* featured products section */}
    <section className="py-16 px-8 md:px-16 bg-gray-50">
-      <h3 className="text-3xl font-bold text-center mb-10 text-gray-800">Featured Products</h3>
+      <h3 className="text-3xl font-bold mb-10 text-gray-800">Explore our Products</h3>
    
     { loading ? (
       <p className="text-center text-gray-500">Loading...</p>
