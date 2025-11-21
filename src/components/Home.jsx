@@ -80,7 +80,7 @@ function Home() {
 
     {/*categories section */}
 
-    <section className="py-16 px-8 md:px-16 bg-white">
+    <section className="py-16 px-8 md:px-16">
       <h3 className="text-3xl font-bold text-center mb-10 text-black">Browse by Categories</h3>
    
     { loading ? (
@@ -119,7 +119,7 @@ function Home() {
       <p className="text-center text-gray-500">No products available</p>
     ):(
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-        {Categories.map((item) => (
+        {products.map((item) => (
           <div
           key={item._id} 
           className="bg-white rounded-xl hover:shadow-2xl transition-all duration-300  overflow-hidden group">

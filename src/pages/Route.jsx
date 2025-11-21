@@ -7,7 +7,9 @@
  import Home from '../components/Home.jsx';
 import ProductTable from './productTable.jsx';
  import CategoryPage from './CategoryPage.jsx';
-import ProductDetails from './ProductDetails.jsx';
+import ProductDetail from './ProductDetails.jsx';
+import Singleproduct from './Singleproduct.jsx';
+
  
 
  export default function Router() {
@@ -22,7 +24,8 @@ import ProductDetails from './ProductDetails.jsx';
         <Route path="/Home" element={<Home/>} />
         <Route path="/ProductTable" element={<ProductTable/>} />
         <Route path='/CategoryPage' element={<CategoryPage/>} />
-         <Route path="/ProductDetail/:id" element={<ProductDetails/>} />
+       <Route path="/ProductDetail/:id" element={<ProductDetail />} />
+       <Route path='/Singleproduct/:id' element={<Singleproduct/>} />
      </Routes>
      </BrowserRouter>
      </>

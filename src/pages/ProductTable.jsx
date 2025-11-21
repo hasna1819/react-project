@@ -8,7 +8,7 @@ function ProductTable() {
   const [form, setForm] = useState({
     title: "",
     price: "",
-    image: "",
+    image: null,
     description: "",
     category: "",
   });
@@ -46,6 +46,11 @@ function ProductTable() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handle image upload
+  const handleFileChange = (e) => {
+    setForm({ ...form, image: e.target.files[0] });
+  };
+
   // Add product
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,23 +62,28 @@ function ProductTable() {
     setLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("price", form.price);
+      formData.append("description", form.description);
+      formData.append("category", form.category);
+      formData.append("image", form.image); // file upload
+
       const res = await fetch(PRODUCT_API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData, // no JSON headers
       });
 
       if (!res.ok) throw new Error("Failed to add product");
 
       const result = await res.json();
 
-      // Backend returns: { product: {...} }
       setProducts([...products, result.product]);
 
       setForm({
         title: "",
         price: "",
-        image: "",
+        image: null,
         description: "",
         category: "",
       });
@@ -140,12 +150,12 @@ function ProductTable() {
             className="border rounded-md px-4 py-2"
           />
 
+          {/* IMAGE UPLOAD */}
           <input
-            type="text"
+            type="file"
             name="image"
-            placeholder="Image URL"
-            value={form.image}
-            onChange={handleChange}
+            accept="image/*"
+            onChange={handleFileChange}
             className="border rounded-md px-4 py-2"
           />
 
@@ -158,7 +168,6 @@ function ProductTable() {
             className="border rounded-md px-4 py-2"
           />
 
-          {/* Category Dropdown */}
           <select
             name="category"
             value={form.category}
@@ -206,7 +215,7 @@ function ProductTable() {
 
                   <td className="px-4 py-3">
                     <img
-                      src={item.image}
+                      src={`http://localhost:8080/${item.image}`}
                       alt={item.title}
                       className="w-14 h-14 object-contain rounded-md border"
                     />

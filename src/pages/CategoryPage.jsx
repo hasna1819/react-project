@@ -5,7 +5,7 @@ function CategoryPage() {
   const user = "http://localhost:8080/category";
 
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ title: "", image: "" });
+  const [form, setForm] = useState({ title: "", image: null });
   const [loading, setLoading] = useState(false);
 
   // 🔹 Fetch all categories
@@ -19,9 +19,14 @@ function CategoryPage() {
     }
   };
 
-  // 🔹 Handle input changes
+  // 🔹 Handle text changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // 🔹 Handle file change
+  const handleFileChange = (e) => {
+    setForm({ ...form, image: e.target.files[0] });
   };
 
   // 🔹 Add a new category
@@ -34,32 +39,26 @@ function CategoryPage() {
     }
 
     setLoading(true);
+
     try {
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("image", form.image);
+
       const res = await fetch(user, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData, // ✅ formData (NOT JSON)
       });
 
       if (!res.ok) throw new Error("Failed to add product");
 
-      let data;
-      const contentType = res.headers.get("content-type");
-
-      // Safely parse JSON or fallback to text
-      if (contentType && contentType.includes("application/json")) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        console.warn("Non-JSON response:", text);
-        data = { product: null };
-      }
+      const data = await res.json();
 
       if (data.product) {
         setProducts((prev) => [...prev, data.product]);
       }
 
-      setForm({ title: "", image: "" });
+      setForm({ title: "", image: null });
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Error adding product");
@@ -68,18 +67,13 @@ function CategoryPage() {
     setLoading(false);
   };
 
-  // 🔹 Delete a category
+  // 🔹 Delete category
   const deleteProduct = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (!confirmDelete) return;
 
     try {
       const res = await fetch(`${user}/${id}`, { method: "DELETE" });
-
-      // Log response status and body for debugging
-      console.log(`DELETE response status: ${res.status}`);
-      const responseText = await res.text();
-      console.log("DELETE response body:", responseText);
 
       if (!res.ok) throw new Error("Failed to delete product");
 
@@ -90,7 +84,6 @@ function CategoryPage() {
     }
   };
 
-  // 🔹 Load categories on mount
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -120,20 +113,19 @@ function CategoryPage() {
             className="border rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-400"
           />
 
+          {/* 🟧 File Upload */}
           <input
-            type="text"
+            type="file"
             name="image"
-            placeholder="Image URL"
-            value={form.image}
-            onChange={handleChange}
-            className="border rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-400"
+            onChange={handleFileChange}
+            className="border rounded-md px-4 py-2 bg-white"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-5 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
+          className="mt-5 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700"
         >
           {loading ? "Adding..." : "Add Category"}
         </button>
@@ -154,13 +146,8 @@ function CategoryPage() {
           <tbody>
             {products.length > 0 ? (
               products.map((product, index) => (
-                <tr
-                  key={product._id}
-                  className="border-b hover:bg-indigo-50 transition-colors duration-200"
-                >
-                  <td className="px-4 py-3 text-gray-700 text-center">
-                    {index + 1}
-                  </td>
+                <tr key={product._id} className="border-b">
+                  <td className="px-4 py-3 text-center">{index + 1}</td>
                   <td className="px-4 py-3 text-center">
                     <img
                       src={product.image}
@@ -168,14 +155,11 @@ function CategoryPage() {
                       className="w-14 h-14 object-contain rounded-md border mx-auto"
                     />
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-800 text-left">
-                    {product.title}
-                  </td>
+                  <td className="px-4 py-3">{product.title}</td>
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => deleteProduct(product._id)}
-                      className="text-red-500 hover:text-red-700 text-2xl"
-                      title="Delete product"
+                      className="text-red-500 text-2xl"
                     >
                       <TiDelete />
                     </button>

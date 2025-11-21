@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 function Addtocart() {
 
     const [id, SetId] = useState("")
-    const [title, SetTitle] = useState()
+    const [title, SetTitle] = useState("")
     const [price, SetPrice] = useState()
     const [image, SetImage] = useState()
 
