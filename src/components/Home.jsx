@@ -57,26 +57,45 @@ function Home() {
      </ul>
     </nav>
 
-    {/* Hero section */}
+ 
+{/* Hero Section */}
+<section className="relative flex flex-col md:flex-row justify-between items-center py-28 px-8 md:px-24 
+  bg-yellow-600 rounded-[40px] mt-10">
 
-    <section className="flex flex-col md:flex-row justify-between items-center py-16 px-8 md:px-16 bg-gradient-to-r from-blue-50 to-blue-100">
-      <div className="md:w-1/2 space-y-6 text-center md:text-left animate-fadeIn">
-      <h2 className="text-5xl font-extrabold text-gray-800 leading-snug">
-        Welcome to{""} 
-        <span className="text-blue-600 drop-shadow-lg">Shopeaze</span>
-        </h2>
-        <p className="text-gray-600 text-lg">
-          Discover high-quality products and exclusive deals - all in love 
-          place!
-        </p>
-        <button className="bg-blue-600 hover:700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-          🛒 Shop Now
-        </button>
-        </div>
+  {/* ---------- Premium Decorative Background ---------- */}
+  <div className="absolute top-0 -left-24 w-96 h-96 bg-yellow-700 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-spin-slow"></div>
+  <div className="absolute bottom-0 -right-32 w-[28rem] h-[28rem] bg-yeelow-300 rounded-full mix-blend-multiply  opacity-25 "></div>
+  <div className="absolute inset-0 bg-yellow  rounded-3xl pointer-events-none"></div>
 
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe9C1q6Eh8Hy6lJZ-mQTFLP5rhsmlKJ0EkPWNDnsJzwe74r8VLLkFmWHX_2G5j7qbQffI&usqp=CAU" alt="shopping" 
-        className='w-70 md:w-[450px] mt-8 md:mt-0'/>
-    </section>
+  {/* ---------- Text Content ---------- */}
+  <div className="md:w-1/2 space-y-6 text-center md:text-left z-10 animate-fadeIn">
+    <h2 className="text-5xl md:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight">
+      Welcome to <span className="text-pink-500 drop-shadow-2xl">Shopeaze</span>
+    </h2>
+    <p className="text-gray-700 text-lg md:text-xl max-w-lg mx-auto md:mx-0">
+      Curated finds, cozy vibes, and exclusive deals – all in one dreamy, luxurious place.
+    </p>
+    <div className="flex justify-center md:justify-start space-x-6 mt-4">
+      <button className="bg-white hover:from white hover:to-black-600 text-gray font-semibold px-12 py-4 rounded-full shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
+        🛒 Shop Now
+      </button>
+    
+      <button className="bg-black hover:white text-gray-50 font-semibold px-12 py-4 rounded-full shadow-xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
+        Explore More
+      </button>
+     
+    </div>
+  </div>
+
+  {/* ---------- Premium Image ---------- */}
+  <div className="md:w-1/2 flex justify-center md:justify-end mt-16 md:mt-0 relative z-10 animate-fadeIn delay-300">
+    <img
+      src="https://awenterprises.in/wp-content/uploads/2023/11/ae-pic2.png"
+      alt="shopping"
+      className="w-72 md:w-[500px] rounded-3xl shadow-2xl shadow-pink-200/50 transform transition-transform duration-700 hover:scale-110 hover:rotate-3 hover:shadow-3xl animate-floating"
+    />
+  </div>
+</section>
 
     {/*categories section */}
 
@@ -99,7 +118,7 @@ function Home() {
             <img 
             src={cat.image}
              alt={cat.title}
-             className='w-24 h-24 object-cover rounded-full mb-3 border-2 border-blue-200'
+             className='w-24 h-24 object-cover rounded-full mb-3 border-2 border-white'
               />
               <h4 className="text-md font-semibold text-gray-700">
                 {cat.title}

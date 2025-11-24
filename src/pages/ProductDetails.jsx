@@ -36,7 +36,7 @@ function ProductDetails() {
     return <div className="p-10 text-xl text-red-500">Product not found</div>;
 
   return (
-    <div className="w-full min-h-[50vh] flex flex-col items-center p-10 bg-gray-200">
+    <div className="w-full min-h-[50vh] p-10 bg-gray-200">
       {products.map((item, index) => (
         <div
           key={item.id || index} // fallback to index if no id exists

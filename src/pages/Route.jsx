@@ -9,6 +9,7 @@ import ProductTable from './productTable.jsx';
  import CategoryPage from './CategoryPage.jsx';
 import ProductDetail from './ProductDetails.jsx';
 import Singleproduct from './Singleproduct.jsx';
+import Signup from './Signup.jsx';
 
  
 
@@ -26,6 +27,7 @@ import Singleproduct from './Singleproduct.jsx';
         <Route path='/CategoryPage' element={<CategoryPage/>} />
        <Route path="/ProductDetail/:id" element={<ProductDetail />} />
        <Route path='/Singleproduct/:id' element={<Singleproduct/>} />
+       <Route path='/Signup' element={<Signup/>} />
      </Routes>
      </BrowserRouter>
      </>
