@@ -10,13 +10,13 @@ function Navbar() {
           Shopeaze
         </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links
         <ul className="hidden md:flex space-x-8 text-sm font-medium">
-          <li className="hover:bg-black cursor-pointer transition">Home</li>
+          <li className="hover:bg-black cursor-pointer transition"></li>
           <li className="hover:bg-black cursor-pointer transition">Products</li>
           <li className="hover:bg-black cursor-pointer transition">About</li>
           <li className="hover:bg-black cursor-pointer transition">Contact</li>
-        </ul>
+        </ul> */}
 
         {/* Search Bar + Icons */}
         <div className="flex items-center space-x-4">

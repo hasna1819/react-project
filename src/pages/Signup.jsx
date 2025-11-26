@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// Particle background
+// ------------------ Particle Background ------------------
 function ParticleBackground() {
   useEffect(() => {
     const canvas = document.getElementById("particles");
@@ -38,6 +38,7 @@ function ParticleBackground() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -50,23 +51,51 @@ function ParticleBackground() {
   );
 }
 
+// ------------------ Signup Form ------------------
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+
+    try {
+      const response = await fetch("http://localhost:8080/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Registration failed");
+        return;
+      }
+
+      alert("User registered successfully!");
+      console.log("Created user:", data);
+
+      // Clear form
+      setForm({ name: "", email: "", password: "" });
+
+    } catch (err) {
+      console.error(err);
+      alert("Error connecting to server");
+    }
   };
 
   return (
     <div className="relative min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 overflow-hidden px-4">
       <ParticleBackground />
 
-      {/* Centered Pinterest-style signup card */}
       <div className="bg-white/20 backdrop-blur-xl rounded-3xl shadow-2xl p-8 w-full max-w-sm border border-white/30 text-white hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-        {/* Decorative floating blob */}
+
+        {/* Floating Blob Decoration */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-tr from-cyan-400 via-purple-400 to-pink-400 rounded-full opacity-20 animate-pulse"></div>
 
         <h1 className="text-3xl font-bold mb-6 text-center">Create Account</h1>
@@ -81,6 +110,7 @@ function Signup() {
             required
             className="w-full bg-white/10 placeholder-white/70 rounded-xl py-3 px-4 border-2 border-white/30 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 outline-none transition-all duration-300"
           />
+
           <input
             type="email"
             name="email"
@@ -90,6 +120,7 @@ function Signup() {
             required
             className="w-full bg-white/10 placeholder-white/70 rounded-xl py-3 px-4 border-2 border-white/30 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 outline-none transition-all duration-300"
           />
+
           <input
             type="password"
             name="password"
@@ -110,13 +141,12 @@ function Signup() {
 
         <p className="mt-4 text-center text-white/70 text-sm">
           Already have an account?{" "}
-          <a href="Login" className="text-cyan-300 hover:underline font-semibold">
+          <a href="/login" className="text-cyan-300 hover:underline font-semibold">
             Login
           </a>
         </p>
       </div>
 
-      {/* Gradient & blob animations */}
       <style>
         {`
           @keyframes pulse {

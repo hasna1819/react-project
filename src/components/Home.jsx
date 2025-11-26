@@ -14,7 +14,7 @@ function Home() {
       try {
         const [catRes, prodRes] = await Promise.all([
           fetch("http://localhost:8080/category"),
-          fetch("http://localhost:8080/user"),
+          fetch("http://localhost:8080/products"),
         ]);
 
         const [catData, prodData]= await Promise.all([
@@ -59,11 +59,11 @@ function Home() {
 
  
 {/* Hero Section */}
-<section className="relative flex flex-col md:flex-row justify-between items-center py-28 px-8 md:px-24 
-  bg-yellow-600 rounded-[40px] mt-10">
+<section className="relative flex flex-col md:flex-row justify-between items-center py-28 px-8 md:px-24 bg-amber-200
+  rounded-[40px] mt-10">
 
   {/* ---------- Premium Decorative Background ---------- */}
-  <div className="absolute top-0 -left-24 w-96 h-96 bg-yellow-700 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-spin-slow"></div>
+  <div className="absolute top-0 -left-24 w-96 h-96rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-spin-slow"></div>
   <div className="absolute bottom-0 -right-32 w-[28rem] h-[28rem] bg-yeelow-300 rounded-full mix-blend-multiply  opacity-25 "></div>
   <div className="absolute inset-0 bg-yellow  rounded-3xl pointer-events-none"></div>
 
@@ -90,46 +90,46 @@ function Home() {
   {/* ---------- Premium Image ---------- */}
   <div className="md:w-1/2 flex justify-center md:justify-end mt-16 md:mt-0 relative z-10 animate-fadeIn delay-300">
     <img
-      src="https://awenterprises.in/wp-content/uploads/2023/11/ae-pic2.png"
+      src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTAzL3N0YXJ0dXBpbWFnZXNfcGhvdG9fb2ZfYXNpYW5fd29tYW5fd2l0aF9zaG9wcGluZ19iYWdfc21pbGVfYW5kX19hMGE3YTBkZS03YTNjLTQzMTYtOGU2Ny1jMzc4NTVmZmJlN2Etcm0xNjgzLTAxYV8xLnBuZw.png"
       alt="shopping"
-      className="w-72 md:w-[500px] rounded-3xl shadow-2xl shadow-pink-200/50 transform transition-transform duration-700 hover:scale-110 hover:rotate-3 hover:shadow-3xl animate-floating"
+      className="w-72 md:w-[500px] rounded-3xl shadow-2xl shadow-pink-200/50 transform transition-transform duration-700l "
     />
   </div>
 </section>
 
-    {/*categories section */}
+ {/* Categories Section */}
+<section className="py-16 px-8 md:px-16 bg-yellow-100 rounded-2xl">
+  <h3 className="text-3xl font-bold text-center mb-10 text-black">
+    Browse by Categories
+  </h3>
 
-    <section className="py-16 px-8 md:px-16">
-      <h3 className="text-3xl font-bold text-center mb-10 text-black">Browse by Categories</h3>
-   
-    { loading ? (
-      <p className="text-center text-black">Loading...</p>
-    ): Categories.length === 0 ? (
-      <p className="text-center text-gray-500">No categories available</p>
-    ):(
-
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-        {Categories.map((cat) => (
-          <Link
+  {loading ? (
+    <p className="text-center text-black">Loading...</p>
+  ) : Categories.length === 0 ? (
+    <p className="text-center text-gray-500">No categories available</p>
+  ) : (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
+      {Categories.map((cat) => (
+        <Link
           to={`/ProductDetail/${cat._id}`}
-          key={cat._id} 
-          className="flex flex-col items-center p=-4 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <img 
+          key={cat._id}
+          className="flex flex-col items-center p-4 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105"
+        >
+          <img
             src={cat.image}
-             alt={cat.title}
-             className='w-24 h-24 object-cover rounded-full mb-3 border-2 border-white'
-              />
-              <h4 className="text-md font-semibold text-gray-700">
-                {cat.title}
-              </h4>
-          </Link>
-        ))}
-      </div>
-    )}
-    </section>
+            alt={cat.title}
+            className="w-24 h-24 object-cover rounded-full mb-3 border-2 border-black"
+          />
+          <h4 className="text-md font-semibold text-gray-700">{cat.title}</h4>
+        </Link>
+      ))}
+    </div>
+  )}
+</section>
+
+
     {/* featured products section */}
-   <section className="py-16 px-8 md:px-16 bg-gray-50">
+   <section className="py-16 px-8 md:px-16 bg-yellow-100">
       <h3 className="text-3xl font-bold mb-10 text-gray-800">Explore our Products</h3>
    
     { loading ? (
