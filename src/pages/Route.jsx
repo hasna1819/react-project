@@ -8,7 +8,7 @@
 import ProductTable from './productTable.jsx';
  import CategoryPage from './CategoryPage.jsx';
 import ProductDetail from './ProductDetails.jsx';
-import Singleproduct from './Singleproduct.jsx';
+import SingleProduct from './SingleProduct.jsx'
 import Signup from './Signup.jsx';
 
  
@@ -26,7 +26,7 @@ import Signup from './Signup.jsx';
         <Route path="/ProductTable" element={<ProductTable/>} />
         <Route path='/CategoryPage' element={<CategoryPage/>} />
        <Route path="/ProductDetail/:id" element={<ProductDetail />} />
-       <Route path='/Singleproduct/:id' element={<Singleproduct/>} />
+       <Route path='/SingleProduct/:id' element={<SingleProduct/>} />
        <Route path='/Signup' element={<Signup/>} />
      </Routes>
      </BrowserRouter>

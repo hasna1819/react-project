@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 
-const Singleproduct = () => {
+const SingleProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ const Singleproduct = () => {
         return;
       }
 
-      const res = await fetch(`http://localhost:8000/user/products/single/${id}`);
+      const res = await fetch(`http://localhost:8080/user/products/single/${id}`);
       if (!res.ok) throw new Error(`Server responded with status ${res.status}`);
 
       const data = await res.json();
@@ -117,4 +117,4 @@ const Singleproduct = () => {
   );
 };
 
-export default Singleproduct;
+export default SingleProduct;
