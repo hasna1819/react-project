@@ -15,7 +15,7 @@ function ProductTable() {
 
   const [loading, setLoading] = useState(false);
 
-  const PRODUCT_API = "http://localhost:8080/user";
+  const PRODUCT_API = "http://localhost:8080/products";
   const DELETE_PRODUCT_API = "http://localhost:8080/api/products";
   const CATEGORY_API = "http://localhost:8080/category";
 
