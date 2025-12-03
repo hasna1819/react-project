@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
-
+import { Navigate } from "react-router-dom";
 function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const token=localStorage.getItem("token")
 
   // Fetch categories + products
   useEffect(() => {
@@ -13,7 +15,11 @@ function Home() {
       try {
         const [catRes, prodRes] = await Promise.all([
           fetch("http://localhost:8080/category"),
-          fetch("http://localhost:8080/products"),
+          fetch("http://localhost:8080/products",{
+  headers: {
+    "Authorization": `Bearer ${token}`
+  }
+}),
         ]);
 
         const [catData, prodData] = await Promise.all([catRes.json(), prodRes.json()]);
@@ -28,6 +34,13 @@ function Home() {
 
     fetchData();
   }, []);
+
+
+  if(!token){
+  
+   return <Navigate to={'/login'}/>
+  }
+
 
   return (
     <div className="w-full min-h-screen flex flex-col font-sans bg-cover bg-center bg-no-repeat pt-24">

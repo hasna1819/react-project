@@ -1,11 +1,12 @@
-// src/pages/Singleproduct.jsx
+// src/pages/ProductDetails.jsx
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 function ProductDetails() {
   const { id } = useParams();
 
-  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const PRODUCT_API = `http://localhost:8080/products/${id}`;
@@ -17,9 +18,11 @@ function ProductDetails() {
 
       const data = await res.json();
 
-      setProducts(Array.isArray(data) ? data : [{ ...data }]);
+      // Backend may return object or array — normalize it
+      setProduct(Array.isArray(data) ? data[0] : data);
     } catch (error) {
       console.error("Error fetching product details:", error);
+      setProduct(null);
     } finally {
       setLoading(false);
     }
@@ -29,85 +32,86 @@ function ProductDetails() {
     fetchProductDetails();
   }, [id]);
 
-  if (loading) return <div className="p-10 text-xl text-center">Loading...</div>;
+  if (loading)
+    return <div className="p-10 text-xl text-center">Loading...</div>;
 
-  if (!products.length)
+  if (!product)
     return (
       <div className="p-10 text-xl text-center text-red-500">
         Product not found
       </div>
     );
 
-  return (
-    <div className="w-full min-h-[100vh] p-10 flex justify-center items-center bg-gradient-to-br from-black via-gray-900 to-gray-800">
+  const { title, image, price, description } = product;
 
-      {products.map((item, index) => (
-        <div
-          key={item.id || index}
+  return (
+    <div className="p-10 flex justify-center items-center min-h-screen bg-[#0f0f0f]">
+
+      <div
+        className="
+          w-full max-w-sm
+          bg-white/10 backdrop-blur-xl 
+          border border-gray-700 
+          rounded-2xl 
+          shadow-2xl shadow-black/40 
+          p-6
+          text-black
+          transition-all 
+          duration-500 
+          hover:scale-[1.02]
+        "
+      >
+        
+        <h1 className="text-2xl font-bold mb-4 text-center tracking-wide text-[#D4AF37]">
+          {title}
+        </h1>
+
+        <div className="flex justify-center mb-6">
+          <img
+            src={image}
+            alt={title}
+            className="
+              w-40 h-40 object-contain 
+              rounded-xl 
+              shadow-lg shadow-black/40 
+              border border-gray-700 
+              hover:scale-105 transition-transform duration-300
+            "
+          />
+        </div>
+
+        <p className="text-xl text-center mt-3 text-[#F2DFA7]">
+          <strong className="text-[#D4AF37]">Price: </strong> ₹{price}
+        </p>
+
+        <p className="text-sm leading-relaxed text-gray-200 text-center">
+          {description || "No description available."}
+        </p>
+
+        {/* LINK TO SINGLE PRODUCT */}
+        <Link
+          to={`/SingleProduct/${product._id || product.id}`}
           className="
-            w-[50%] md:w-[15%] lg:w-[30%] 
-            bg-white/10 backdrop-blur-xl 
-            border border-gray-700 
-            rounded-2xl 
-            shadow-2xl shadow-black/40 
-            p-8 
-            text-white 
-            transition-all 
-            duration-500 
-            hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/70
+            block text-center
+            w-full 
+            mt-6 py-3 
+            text-lg font-semibold 
+            rounded-xl 
+            bg-gradient-to-r from-[#D4AF37] to-[#b8962e] 
+            text-black
+            shadow-lg shadow-black/50 
+            border border-yellow-700 
+            transition-all duration-300 
+            hover:shadow-yellow-500/50 
+            hover:shadow-2xl
+            hover:-translate-y-1
+            hover:from-[#f1d67c] hover:to-[#D4AF37]
+            active:scale-95
           "
         >
-          
-          <h1 className="text-4xl font-extrabold mb-6 text-center tracking-wide text-[#D4AF37]">
-            {item.title}
-          </h1>
-
-          <div className="flex justify-center mb-6">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="
-                w-30 h-30 object-contain 
-                rounded-xl 
-                shadow-lg shadow-black/40 
-                border border-gray-700 
-                hover:scale-105 transition-transform duration-300
-              "
-            />
-          </div>
-
-          <p className="text-2xl text-center mb-4 text-[#F2DFA7]">
-            <strong className="text-[#D4AF37]">Price: </strong>
-            ₹{item.price}
-          </p>
-
-          <p className="text-lg leading-relaxed text-gray-200 text-center">
-            {item.description || "No description available."}
-          </p>
-          <button
-  className="
-    w-60% 
-    mt-6 
-    py-3 
-    text-lg 
-    font-semibold 
-    rounded-xl 
-    bg-gradient-to-r from-[#D4AF37] to-[#b8962e] 
-    text-black 
-    shadow-xl shadow-black/40 
-    border border-yellow-700 
-    transition-all duration-300 
-    hover:from-[#e7c45c] hover:to-[#D4AF37] 
-    hover:shadow-2xl hover:shadow-yellow-700/50 
-    hover:scale-105 
-    active:scale-95
-  "
->
- view
-</button>
-
-        </div>
-      ))}
+          View Full Details
+        </Link>
+      </div>
     </div>
   );
 }

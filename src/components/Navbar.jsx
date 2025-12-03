@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { ShoppingCart, User, Search, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const nav=useNavigate()
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", path: "Home" },
     { name: "Products", path: "/products" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    
+    { name:"Login", path:"/login"},
+    {name:"Signup", path:"/signup"}
   ];
 
   return (
@@ -35,6 +38,11 @@ function Navbar() {
           ))}
         </ul>
 
+<button onClick={()=>{
+  localStorage.removeItem("token")
+
+  nav('/login')
+}}>logout</button>
         {/* Icons */}
         <div className="flex items-center space-x-4">
           {/* Search bar (Desktop only) */}
@@ -47,9 +55,12 @@ function Navbar() {
             />
           </div>
 
-          <User size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
+         <a href="Profile">
+  <User size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
+</a>
+ <a href="Cart">
           <ShoppingCart size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
-
+</a>
           {/* Hamburger Button (Mobile) */}
           <button
             className="md:hidden p-1 rounded hover:bg-black"

@@ -15,26 +15,30 @@ function Login() {
   // Handle login
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch("http://localhost:8080/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (response.ok) {
+
+
         // Optional: store token
-        // const data = await response.json();
-        // localStorage.setItem("token", data.token);
+        const data = await response.json();
+
+
+        localStorage.setItem("token", data.token);
 
         // Redirect to Home on success
         navigate("/Home");
       } else {
         // Redirect to Home on failure as well
-        navigate("/Home");
+        // navigate("/Home");
       }
     } catch (err) {
       console.error("Login error:", err);
-      navigate("/Home");
+      // navigate("/Home");
     }
   };
 

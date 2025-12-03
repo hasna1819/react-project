@@ -215,7 +215,7 @@ function ProductTable() {
 
                   <td className="px-4 py-3">
                     <img
-                      src={`http://localhost:8080/${item.image}`}
+                      src={item.image}
                       alt={item.title}
                       className="w-14 h-14 object-contain rounded-md border"
                     />
