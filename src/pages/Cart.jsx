@@ -1,101 +1,101 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function ProductList() {
-  // Sample products with images
-  const products = [
-    { id: 1, name: 'Product 1', price: 29.99, image: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'Product 2', price: 49.99, image: 'https://via.placeholder.com/150' },
-    { id: 3, name: 'Product 3', price: 19.99, image: 'https://via.placeholder.com/150' },
-    { id: 4, name: 'Product 4', price: 39.99, image: 'https://via.placeholder.com/150' },
-  ];
+function Cart() {
+  const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate();
 
-  // Cart state
-  const [cart, setCart] = useState([]);
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
+  }, []);
 
-  // Add to cart
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      } else {
-        return [...prev, { ...product, quantity: 1 }];
-      }
-    });
+  const handleRemove = (id) => {
+    const updatedCart = cartItems.filter((item) => item.id !== id);
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
+  const calculateTotals = () => {
+    const subtotal = cartItems.reduce((sum, item) => sum + Number(item.price) * (item.quantity || 1), 0);
+    const gst = +(subtotal * 0.18).toFixed(2);
+    const deliveryFee = cartItems.length > 0 ? 50 : 0;
+    const total = subtotal + gst + deliveryFee;
+    return { subtotal, gst, deliveryFee, total };
+  };
+
+  const handleProceed = () => {
+    // Store order summary in localStorage for Proceed page
+    const totals = calculateTotals();
+    localStorage.setItem("orderSummary", JSON.stringify({ items: cartItems, ...totals }));
+    navigate("/proceed");
+  };
+
+  const { subtotal, gst, deliveryFee, total } = calculateTotals();
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Products</h1>
+    <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center p-10">
+      <h2 className="text-4xl font-extrabold text-yellow-400 mb-8 text-center tracking-wide">
+        Cart Section
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded shadow p-4 hover:shadow-lg transition"
-          >
-            {/* Product Image */}
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-40 object-cover mb-4 rounded"
-            />
-
-            {/* Product Name */}
-            <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-
-            {/* Product Price */}
-            <p className="text-gray-700 mb-4">${product.price.toFixed(2)}</p>
-
-            {/* Add to Cart Button */}
-            <button
-              onClick={() => addToCart(product)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* Cart Summary */}
-      <div className="bg-white p-4 rounded shadow mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Cart</h2>
-        {cart.length === 0 ? (
-          <p className="text-gray-600">Your cart is empty.</p>
-        ) : (
-          <div>
-            {cart.map((item) => (
+      {cartItems.length === 0 ? (
+        <p className="text-gray-400 text-xl text-center italic">Your cart is empty.</p>
+      ) : (
+        <>
+          <div className="w-full flex flex-col md:flex-row md:flex-wrap gap-6 justify-center">
+            {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between items-center mb-2"
+                className="w-72 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl border border-gray-700 p-6 flex flex-col justify-between transition-transform hover:scale-105"
               >
-                <div>
-                  {item.name} x {item.quantity}
+                <div className="flex flex-col items-center">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="rounded-xl w-48 h-48 object-contain shadow-xl mb-4"
+                  />
+                  <h3 className="text-xl font-bold text-gray-100 text-center mb-2">{item.title}</h3>
+                  <p className="text-gray-300 mb-2">Category: {item.category?.title || "N/A"}</p>
+                  <p className="text-yellow-400 font-semibold mb-2">
+                    ₹{item.price} x {item.quantity || 1}
+                  </p>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  <button
-                    onClick={() =>
-                      setCart(cart.filter((cartItem) => cartItem.id !== item.id))
-                    }
-                    className="text-red-500 hover:underline"
-                  >
-                    Remove
-                  </button>
+                <div className="text-gray-300 text-sm mb-4">
+                  <p>Subtotal: ₹{Number(item.price) * (item.quantity || 1)}</p>
+                  <p>GST (18%): ₹{(+item.price * 0.18).toFixed(2)}</p>
+                  <p>Delivery Fee: ₹{cartItems.length > 0 ? 50 : 0}</p>
+                  <p className="text-yellow-400 font-bold text-lg mt-2">
+                    Total: ₹{Number(item.price) * (item.quantity || 1) + (+item.price * 0.18) + (cartItems.length > 0 ? 50 : 0)}
+                  </p>
                 </div>
+                <button
+                  onClick={() => handleRemove(item.id)}
+                  className="w-full py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold shadow-lg"
+                >
+                  Remove
+                </button>
               </div>
             ))}
-            <div className="mt-4 font-bold text-lg">
-              Total: ${cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}
-            </div>
           </div>
-        )}
-      </div>
+
+          <div className="mt-8 bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-2xl text-gray-100 w-full max-w-xl flex flex-col gap-3">
+            <p>Subtotal: ₹{subtotal}</p>
+            <p>GST (18%): ₹{gst}</p>
+            <p>Delivery Fee: ₹{deliveryFee}</p>
+            <p className="text-yellow-400 font-bold text-xl">Total: ₹{total}</p>
+          </div>
+
+          <button
+            onClick={handleProceed}
+            className="mt-6 w-1/2 py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-bold shadow-2xl hover:scale-105 transition-transform"
+          >
+            Proceed to Checkout
+          </button>
+        </>
+      )}
     </div>
   );
 }
 
-export default ProductList;
+export default Cart;

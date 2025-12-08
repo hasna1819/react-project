@@ -8,7 +8,7 @@ function ProductTable() {
   const [form, setForm] = useState({
     title: "",
     price: "",
-    image: null,
+    image: "",
     description: "",
     category: "",
   });
@@ -16,17 +16,21 @@ function ProductTable() {
   const [loading, setLoading] = useState(false);
 
   const PRODUCT_API = "http://localhost:8080/products";
-  const DELETE_PRODUCT_API = "http://localhost:8080/api/products";
   const CATEGORY_API = "http://localhost:8080/category";
+  const BASE_URL = "http://localhost:8080";
+  const token = localStorage.getItem("token");
 
-  // Fetch products
+  // Fetch products with token
   const fetchProducts = async () => {
     try {
-      const res = await fetch(PRODUCT_API);
+      const res = await fetch(PRODUCT_API, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       const data = await res.json();
       setProducts(data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } catch (err) {
+      console.error("Error fetching products:", err);
     }
   };
 
@@ -36,8 +40,8 @@ function ProductTable() {
       const res = await fetch(CATEGORY_API);
       const data = await res.json();
       setCategories(data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
     }
   };
 
@@ -46,19 +50,14 @@ function ProductTable() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle image upload
+  // Handle file change
   const handleFileChange = (e) => {
     setForm({ ...form, image: e.target.files[0] });
   };
 
-  // Add product
+  // Submit - Add Product
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.title || !form.price || !form.image) {
-      alert("Please fill all required fields");
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -67,28 +66,25 @@ function ProductTable() {
       formData.append("price", form.price);
       formData.append("description", form.description);
       formData.append("category", form.category);
-      formData.append("image", form.image); // file upload
+      formData.append("image", form.image);
 
       const res = await fetch(PRODUCT_API, {
         method: "POST",
-        body: formData, // no JSON headers
+        body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to add product");
+      const data = await res.json();
 
-      const result = await res.json();
-
-      setProducts([...products, result.product]);
+      setProducts([...products, data.product]);
 
       setForm({
         title: "",
         price: "",
-        image: null,
+        image: "",
         description: "",
         category: "",
       });
-
-    } catch (error) {
+    } catch (err) {
       alert("Error adding product");
     }
 
@@ -97,22 +93,22 @@ function ProductTable() {
 
   // Delete product
   const deleteProduct = async (id) => {
-    const confirmDelete = window.confirm("Are you sure?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Delete this product?")) return;
 
     try {
-      const res = await fetch(`${DELETE_PRODUCT_API}/${id}`, {
+      const res = await fetch(`${PRODUCT_API}/${id}`, {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) throw new Error("Failed");
 
       setProducts(products.filter((p) => p._id !== id));
-    } catch (error) {
+    } catch (err) {
       alert("Error deleting product");
     }
   };
 
+  // Run on load
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -120,14 +116,12 @@ function ProductTable() {
 
   return (
     <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <h1 className="text-4xl font-bold mb-6 text-gray-800">
-        Product Manager
-      </h1>
+      <h1 className="text-4xl font-bold mb-6">Product Manager</h1>
 
-      {/* Add Product */}
+      {/* Add Product Form */}
       <form
         onSubmit={handleSubmit}
-        className="w-[90%] md:w-[70%] lg:w-[60%] bg-white shadow-lg rounded-lg p-6 mb-10"
+        className="w-[90%] md:w-[70%] bg-white shadow-lg p-6 mb-10"
       >
         <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
 
@@ -135,44 +129,47 @@ function ProductTable() {
           <input
             type="text"
             name="title"
-            placeholder="Product title"
             value={form.title}
             onChange={handleChange}
-            className="border rounded-md px-4 py-2"
+            placeholder="Product Title"
+            className="border px-4 py-2 rounded"
+            required
           />
 
           <input
             type="number"
             name="price"
-            placeholder="Price (₹)"
             value={form.price}
             onChange={handleChange}
-            className="border rounded-md px-4 py-2"
+            placeholder="Price"
+            className="border px-4 py-2 rounded"
+            required
           />
 
-          {/* IMAGE UPLOAD */}
           <input
             type="file"
             name="image"
-            accept="image/*"
             onChange={handleFileChange}
-            className="border rounded-md px-4 py-2"
+            className="border px-4 py-2 rounded"
+            required
           />
 
           <input
             type="text"
             name="description"
-            placeholder="Product Description"
             value={form.description}
             onChange={handleChange}
-            className="border rounded-md px-4 py-2"
+            placeholder="Description"
+            className="border px-4 py-2 rounded"
+            required
           />
 
           <select
             name="category"
             value={form.category}
             onChange={handleChange}
-            className="border rounded-md px-4 py-2"
+            className="border px-4 py-2 rounded"
+            required
           >
             <option value="">Select Category</option>
             {categories.map((cat) => (
@@ -186,50 +183,54 @@ function ProductTable() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-5 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+          className="mt-5 bg-indigo-600 text-white px-6 py-2 rounded"
         >
           {loading ? "Adding..." : "Add Product"}
         </button>
       </form>
 
       {/* Product Table */}
-      <div className="w-[90%] md:w-[80%] lg:w-[70%] bg-white shadow-xl rounded-lg overflow-hidden">
+      <div className="w-[90%] md:w-[80%] bg-white shadow-xl rounded-lg overflow-hidden">
         <table className="w-full">
           <thead className="bg-indigo-600 text-white">
             <tr>
-              <th className="px-4 py-3 text-left">No</th>
-              <th className="px-4 py-3 text-left">Image</th>
-              <th className="px-4 py-3 text-left">Title</th>
-              <th className="px-4 py-3 text-center">Category</th>
-              <th className="px-4 py-3 text-left">Price</th>
-              <th className="px-4 py-3 text-left">Description</th>
-              <th className="px-4 py-3 text-center">Action</th>
+              <th>No</th>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
             {products.length > 0 ? (
-              products.map((item, index) => (
-                <tr key={item._id} className="border-b hover:bg-indigo-50">
-                  <td className="px-4 py-3">{index + 1}</td>
+              products.map((p, i) => (
+                <tr key={p._id} className="border-b">
+                  <td>{i + 1}</td>
 
-                  <td className="px-4 py-3">
+                  <td>
                     <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-14 h-14 object-contain rounded-md border"
+                      src={
+                        p.image?.startsWith("http")
+                          ? p.image
+                          : `${BASE_URL}/${p.image}`
+                      }
+                      className="w-14 h-14 object-cover rounded"
+                      alt=""
                     />
                   </td>
 
-                  <td className="px-4 py-3">{item.title}</td>
-                  <td className="px-4 py-3 text-center">{item.category}</td>
-                  <td className="px-4 py-3">₹{item.price}</td>
-                  <td className="px-4 py-3">{item.description}</td>
+                  <td>{p.title}</td>
+                  <td>{p.category?.title}</td>
+                  <td>₹{p.price}</td>
+                  <td>{p.description}</td>
 
-                  <td className="px-4 py-3 text-center">
+                  <td>
                     <button
-                      onClick={() => deleteProduct(item._id)}
-                      className="text-red-500 hover:text-red-700 text-2xl"
+                      onClick={() => deleteProduct(p._id)}
+                      className="text-red-500 text-2xl"
                     >
                       <TiDelete />
                     </button>
@@ -238,10 +239,7 @@ function ProductTable() {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="7"
-                  className="text-center py-6 text-gray-500 font-medium"
-                >
+                <td colSpan="7" className="text-center py-4">
                   No Products Found
                 </td>
               </tr>

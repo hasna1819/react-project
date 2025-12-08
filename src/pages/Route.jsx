@@ -1,18 +1,21 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Product from "./product";
+import Product from "./Product";
 import Details from "../components/Details.jsx";
 import Login from "../components/Login.jsx";
-import Addtocart from "./Addtocart.jsx";
-import Home from "../components/Home.jsx";
-import ProductTable from "./productTable.jsx";
-import CategoryPage from "./CategoryPage.jsx";
-import ProductDetail from "./ProductDetails.jsx";
-import SingleProduct from "./SingleProduct";
 import Signup from "./Signup.jsx";
 import Profile from "./Profile.jsx";
+import AddToCart from "./AddToCart.jsx";
 import Cart from "./Cart.jsx";
+import Address from "./Address.jsx"; // Make sure you create this component
+import Proceed from "./Proceed.jsx";
+import OrderDetails from "./Orderdetails.jsx";
+import Home from "../components/Home.jsx";
+import ProductTable from "./ProductTable.jsx";
+import CategoryPage from "./CategoryPage.jsx";
+import ProductDetail from "./ProductDetails.jsx";
+import SingleProduct from "./Singleproduct.jsx";
 
 export default function Router() {
   return (
@@ -25,26 +28,29 @@ export default function Router() {
         <Route path="/details/:id" element={<Details />} />
 
         {/* AUTH */}
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* USER */}
         <Route path="/profile" element={<Profile />} />
 
         {/* CART */}
-        <Route path="/Addtocart" element={<Addtocart />} />
-        <Route path="/Cart" element={<Cart />} />
+        <Route path="/addtocart" element={<AddToCart />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/address" element={<Address />} />
+        <Route path="/proceed" element={<Proceed />} />
+        <Route path="/orderdetails" element={<OrderDetails />} />
 
         {/* OTHER PAGES */}
-        <Route path="/Home" element={<Home />} />
+        <Route path="/home" element={<Home />} />
 
         {/* ADMIN + CATEGORY */}
-        <Route path="/ProductTable" element={<ProductTable />} />
-        <Route path="/CategoryPage" element={<CategoryPage />} />
+        <Route path="/producttable" element={<ProductTable />} />
+        <Route path="/categorypage" element={<CategoryPage />} />
 
-        {/* IMPORTANT ROUTES USED IN YOUR SINGLE PRODUCT PAGE */}
-        <Route path="/ProductDetail/:id" element={<ProductDetail />} />
-        <Route path="/SingleProduct/:id" element={<SingleProduct />} />
+        {/* SINGLE PRODUCT PAGES */}
+        <Route path="/productdetail/:id" element={<ProductDetail />} />
+        <Route path="/singleproduct/:id" element={<SingleProduct />} />
       </Routes>
     </BrowserRouter>
   );

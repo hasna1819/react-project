@@ -5,7 +5,6 @@ import { useParams, Link } from "react-router-dom";
 
 const SingleProduct = () => {
   const { id } = useParams();
-
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -13,14 +12,10 @@ const SingleProduct = () => {
   const fetchProduct = useCallback(async () => {
     setLoading(true);
     setError("");
-
     try {
       const res = await fetch(`http://localhost:8080/user/products/single/${id}`);
-
       if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-
       const data = await res.json();
-
       setProduct(data.product || data);
     } catch (err) {
       console.error("Fetch error:", err);
@@ -33,6 +28,21 @@ const SingleProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, [fetchProduct]);
+
+  const handleAddToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingIndex = cart.findIndex(item => item._id === product._id);
+
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("storage"));
+    alert(`${product.title} added to cart!`);
+  };
 
   if (loading)
     return (
@@ -62,7 +72,6 @@ const SingleProduct = () => {
     );
 
   const { image, title, description, price, category, _id } = product;
-  const categoryId = category?._id || category;
 
   return (
     <div className="w-full min-h-screen flex justify-center items-start py-20 px-4 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
@@ -97,21 +106,15 @@ const SingleProduct = () => {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-4">
-            {categoryId && (
-              <Link
-                to={`/ProductDetail/${categoryId}`}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform"
-              >
-                Back to Category
-              </Link>
-            )}
-
-            <Link
-              to={`/SingleProduct/${_id}`}
+       <Link
+              to={`/Proceed`}
               className="text-indigo-600 underline font-medium self-start"
             >
-              Reload Product
+              Add to cart
             </Link>
+            
+
+        
           </div>
         </div>
 
