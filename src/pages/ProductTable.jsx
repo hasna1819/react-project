@@ -4,29 +4,26 @@ import { TiDelete } from "react-icons/ti";
 function ProductTable() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-
   const [form, setForm] = useState({
     title: "",
     price: "",
-    image: "",
+    image: null,
     description: "",
     category: "",
   });
-
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const PRODUCT_API = "http://localhost:8080/products";
   const CATEGORY_API = "http://localhost:8080/category";
-  const BASE_URL = "http://localhost:8080";
   const token = localStorage.getItem("token");
 
-  // Fetch products with token
+  // Fetch products
   const fetchProducts = async () => {
     try {
       const res = await fetch(PRODUCT_API, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -45,17 +42,26 @@ function ProductTable() {
     }
   };
 
-  // Handle input
+  // Handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle file change
+  // Handle file change with preview
   const handleFileChange = (e) => {
-    setForm({ ...form, image: e.target.files[0] });
+    const file = e.target.files[0];
+    setForm({ ...form, image: file });
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
   };
 
-  // Submit - Add Product
+  // Submit new product
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -66,26 +72,31 @@ function ProductTable() {
       formData.append("price", form.price);
       formData.append("description", form.description);
       formData.append("category", form.category);
-      formData.append("image", form.image);
+      if (form.image) formData.append("image", form.image);
 
       const res = await fetch(PRODUCT_API, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
-      const data = await res.json();
+      if (!res.ok) throw new Error("Failed to add product");
 
+      const data = await res.json();
       setProducts([...products, data.product]);
 
+      // Reset form
       setForm({
         title: "",
         price: "",
-        image: "",
+        image: null,
         description: "",
         category: "",
       });
+      setImagePreview(null);
     } catch (err) {
       alert("Error adding product");
+      console.error(err);
     }
 
     setLoading(false);
@@ -98,17 +109,18 @@ function ProductTable() {
     try {
       const res = await fetch(`${PRODUCT_API}/${id}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error("Failed to delete");
 
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) {
       alert("Error deleting product");
+      console.error(err);
     }
   };
 
-  // Run on load
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -146,13 +158,22 @@ function ProductTable() {
             required
           />
 
-          <input
-            type="file"
-            name="image"
-            onChange={handleFileChange}
-            className="border px-4 py-2 rounded"
-            required
-          />
+          <div>
+            <input
+              type="file"
+              name="image"
+              onChange={handleFileChange}
+              className="border px-4 py-2 rounded"
+              required
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-2 w-20 h-20 object-cover rounded"
+              />
+            )}
+          </div>
 
           <input
             type="text"
@@ -209,24 +230,21 @@ function ProductTable() {
               products.map((p, i) => (
                 <tr key={p._id} className="border-b">
                   <td>{i + 1}</td>
-
                   <td>
                     <img
-                      src={
-                        p.image?.startsWith("http")
-                          ? p.image
-                          : `${BASE_URL}/${p.image}`
-                      }
+                      src={p.image || "https://via.placeholder.com/50?text=No+Image"}
+                      alt={p.title}
                       className="w-14 h-14 object-cover rounded"
-                      alt=""
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/50?text=No+Image";
+                      }}
                     />
                   </td>
-
                   <td>{p.title}</td>
-                  <td>{p.category?.title}</td>
+                  <td>{p.category?.title || "N/A"}</td>
                   <td>₹{p.price}</td>
                   <td>{p.description}</td>
-
                   <td>
                     <button
                       onClick={() => deleteProduct(p._id)}

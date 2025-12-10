@@ -30,6 +30,9 @@ const useCartStore = create(
         set({ cart: get().cart.filter(item => item.id !== productId) });
       },
 
+      // Clear the cart
+      clearCart: () => set({ cart: [] }),
+
       // Get total items
       getTotalItems: () => get().cart.reduce((acc, item) => acc + item.quantity, 0),
 
