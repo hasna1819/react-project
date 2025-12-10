@@ -2,14 +2,19 @@ import React, { useState } from "react";
 import { ShoppingCart, User, Search, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import useCartStore from "../CartStore";
 
 function Navbar() {
   const nav=useNavigate()
   const [isOpen, setIsOpen] = useState(false);
+  const {getTotalItems}=useCartStore()
+
+
+  console.log("total",getTotalItems())
 
   const navLinks = [
     { name: "Home", path: "Home" },
-    { name: "Products", path: "/products" },
+    { name: "Product", path: "/product" },
     
     { name:"Login", path:"/login"},
     {name:"Signup", path:"/signup"}
@@ -58,8 +63,13 @@ function Navbar() {
          <a href="Profile">
   <User size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
 </a>
- <a href="Cart">
-          <ShoppingCart size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
+<a href="Cart" className="relative inline-block">
+  <ShoppingCart size={22} className="cursor-pointer hover:bg-black p-1 rounded" />
+  {getTotalItems() > 0 && (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+      {getTotalItems()}
+    </span>
+  )}
 </a>
           {/* Hamburger Button (Mobile) */}
           <button

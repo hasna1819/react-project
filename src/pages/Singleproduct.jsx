@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import useCartStore from "../CartStore";
 
 const SingleProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const {addToCart}=useCartStore()
 
   const fetchProduct = useCallback(async () => {
     setLoading(true);
@@ -109,6 +111,14 @@ const SingleProduct = () => {
        <Link
               to={`/Proceed`}
               className="text-indigo-600 underline font-medium self-start"
+              onClick={()=>{
+                addToCart({
+                  id:_id,
+                  image:image,
+                  title:title,
+                  price:price
+                })
+              }}
             >
               Add to cart
             </Link>
