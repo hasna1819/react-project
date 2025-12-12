@@ -8,6 +8,7 @@ function ProductDetails() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mainImage, setMainImage] = useState("");
 
   const PRODUCT_API = `http://localhost:8080/products/${id}`;
 
@@ -19,7 +20,15 @@ function ProductDetails() {
       const data = await res.json();
 
       // Backend may return object or array — normalize it
-      setProduct(Array.isArray(data) ? data[0] : data);
+      const productData = Array.isArray(data) ? data[0] : data;
+      setProduct(productData);
+
+      // Set initial main image
+      if (productData.images && productData.images.length > 0) {
+        setMainImage(productData.images[0]);
+      } else if (productData.image) {
+        setMainImage(productData.image);
+      }
     } catch (error) {
       console.error("Error fetching product details:", error);
       setProduct(null);
@@ -42,11 +51,10 @@ function ProductDetails() {
       </div>
     );
 
-  const { title, image, price, description } = product;
+  const { title, images = [], price, description } = product;
 
   return (
     <div className="p-10 flex justify-center items-center min-h-screen bg-[#0f0f0f]">
-
       <div
         className="
           w-full max-w-sm
@@ -61,23 +69,33 @@ function ProductDetails() {
           hover:scale-[1.02]
         "
       >
-        
         <h1 className="text-2xl font-bold mb-4 text-center tracking-wide text-[#D4AF37]">
           {title}
         </h1>
 
-        <div className="flex justify-center mb-6">
+        {/* Main Image + Thumbnails */}
+        <div className="flex flex-col items-center mb-6">
+          {/* Main Image */}
           <img
-            src={image}
+            src={mainImage}
             alt={title}
-            className="
-              w-40 h-40 object-contain 
-              rounded-xl 
-              shadow-lg shadow-black/40 
-              border border-gray-700 
-              hover:scale-105 transition-transform duration-300
-            "
+            className="w-40 h-40 object-contain rounded-xl shadow-lg shadow-black/40 border border-gray-700 mb-4 transition-transform duration-300 hover:scale-105"
           />
+
+          {/* Thumbnails */}
+          <div className="flex space-x-2">
+            {(images.length > 0 ? images : [product.image]).map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`${title} ${index + 1}`}
+                onClick={() => setMainImage(img)}
+                className={`w-16 h-16 object-contain rounded-xl border cursor-pointer transition-transform duration-200 hover:scale-105 ${
+                  mainImage === img ? "border-yellow-500" : "border-gray-700"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         <p className="text-xl text-center mt-3 text-[#F2DFA7]">

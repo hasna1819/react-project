@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import { Navigate } from "react-router-dom";
+import useCartStore from "../CartStore";
+
 function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const token=localStorage.getItem("token")
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const { addToCart } = useCartStore(); // get addToCart from store
 
   // Fetch categories + products
   useEffect(() => {
@@ -15,14 +18,17 @@ function Home() {
       try {
         const [catRes, prodRes] = await Promise.all([
           fetch("http://localhost:8080/category"),
-          fetch("http://localhost:8080/products",{
-  headers: {
-    "Authorization": `Bearer ${token}`
-  }
-}),
+          fetch("http://localhost:8080/products", {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          }),
         ]);
 
-        const [catData, prodData] = await Promise.all([catRes.json(), prodRes.json()]);
+        const [catData, prodData] = await Promise.all([
+          catRes.json(),
+          prodRes.json(),
+        ]);
         setCategories(catData);
         setProducts(prodData);
       } catch (err) {
@@ -33,14 +39,11 @@ function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
-
-  if(!token){
-  
-   return <Navigate to={'/login'}/>
+  if (!token) {
+    return <Navigate to={"/login"} />;
   }
-
 
   return (
     <div className="w-full min-h-screen flex flex-col font-sans bg-cover bg-center bg-no-repeat pt-24">
@@ -71,10 +74,6 @@ function Home() {
               Explore More
             </button>
           </div>
-        </div>
-
-        <div className="md:w-1/2 flex justify-center md:justify-end mt-16 md:mt-0">
-          {/* Optional hero image */}
         </div>
       </section>
 
@@ -108,65 +107,73 @@ function Home() {
         )}
       </section>
 
-      {/* PRODUCTS */}
-      <section className="py-24 px-6 md:px-20 bg-gradient-to-br from-amber-50 via-white to-blue-50 relative overflow-hidden">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-amber-300/30 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-400/30 blur-[140px] rounded-full"></div>
-        <div className="absolute top-1/2 right-1/3 w-96 h-96 bg-purple-300/20 blur-[180px] rounded-full"></div>
+    <section className="relative py-24 px-6 md:px-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
+  {/* Section Title */}
+  <h3 className=" bg-amber-100 text-5xl font-extrabold mb-12 text-center drop-shadow-lg bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-indigo-800">
+    Explore Our Premium Products
+  </h3>
 
-        <h3 className="text-5xl font-extrabold mb-16 tracking-tight text-center drop-shadow-lg bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-blue-800">
-          Explore Our Premium Products
-        </h3>
-
-        {loading ? (
-          <p className="text-center text-gray-500 text-lg animate-pulse">Loading...</p>
-        ) : products.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">No products available</p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
-            {products.map((item) => (
-              <div
-                key={item._id}
-                className="backdrop-blur-xl bg-white/60 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.1)]
-                           hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] hover:bg-white/80 transition-all duration-700 overflow-hidden 
-                           border border-white/40 hover:-translate-y-3"
-              >
-                <div className="overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="rounded-t-3xl w-full h-64 object-cover transform hover:scale-110 transition-all duration-700"
-                  />
-                </div>
-
-                <div className="p-7">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
-                    {item.title}
-                  </h4>
-
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  <p className="text-blue-700 font-extrabold text-2xl mb-1">₹ {item.price}</p>
-                  <p className="text-gray-700 text-sm mb-5">{item?.category?.title ?? "No category"}</p>
-
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-5 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            ))}
+  {loading ? (
+    <p className="text-center text-gray-500 text-lg animate-pulse">Loading...</p>
+  ) : products.length === 0 ? (
+    <p className="text-center text-gray-500 text-lg">No products available</p>
+  ) : (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      {products.map((item) => (
+        <div
+          key={item._id}
+          className="relative bg-white/20 backdrop-blur-xl rounded-2xl border border-white/20 shadow-md hover:shadow-lg hover:-translate-y-1 transform transition-all duration-500 flex flex-col items-center p-10"
+        >
+          {/* Image */}
+          <div className="w-28 h-28 overflow-hidden rounded-xl mb-3">
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105"
+            />
           </div>
-        )}
-      </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white text-center py-6 mt-20 shadow-xl">
-        <p className="text-sm tracking-wide">
-          {new Date().getFullYear()} <b>Shopeaze</b>. All rights reserved.
-        </p>
-      </footer>
+          {/* Product Info */}
+          <h4 className="text-sm font-semibold text-gray-900 text-center mb-1 truncate w-full">
+            {item.title}
+          </h4>
+          <p className="text-xs text-gray-600 mb-2 line-clamp-2 text-center">
+            {item?.category?.title ?? "No category"}
+          </p>
+          <p className="text-indigo-600 font-bold text-sm mb-2">₹ {item.price}</p>
+
+          {/* Add to Cart Button */}
+          <button
+            className="w-full py-1 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-xs font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
+            onClick={() => {
+              addToCart(
+                {
+                  id: item._id,
+                  title: item.title,
+                  price: item.price,
+                  image: item.image,
+                  description: item.description,
+                  category: item.category,
+                },
+                1
+              );
+              navigate("/Proceed");
+            }}
+          >
+            Add To Cart
+          </button>
+
+          {/* Mini Premium Badge */}
+          <div className="absolute top-2 right-2 bg-yellow-400 text-gray-900 font-bold px-2 py-0.5 rounded-full text-[10px] shadow">
+          NEW
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
+
     </div>
   );
 }
