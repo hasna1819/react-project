@@ -157,7 +157,7 @@ function Home() {
                 },
                 1
               );
-              navigate("/Proceed");
+              navigate("/SingleProduct");
             }}
           >
             Add To Cart

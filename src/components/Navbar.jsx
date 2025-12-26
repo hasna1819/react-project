@@ -13,8 +13,8 @@ function Navbar() {
   console.log("total",getTotalItems())
 
   const navLinks = [
-    { name: "Home", path: "Home" },
-    { name: "Product", path: "/product" },
+    // { name: "Home", path: "Home" },
+    // { name: "Product", path: "/product" },
     
     { name:"Login", path:"/login"},
     {name:"Signup", path:"/signup"}

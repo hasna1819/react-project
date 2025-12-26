@@ -13,7 +13,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:8080/user/login", {
+      const response = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -27,7 +27,7 @@ function Login() {
 
       const data = await response.json();
       localStorage.setItem("token", data.token); // Store token securely
-      navigate("/Home"); // Redirect to home after login
+      navigate("/"); // Redirect to home after login
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Try again.");

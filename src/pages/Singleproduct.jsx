@@ -1,27 +1,37 @@
-// src/pages/SingleProduct.jsx
-
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import useCartStore from "../CartStore";
 
 const SingleProduct = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // For programmatic navigation
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const {addToCart}=useCartStore()
+
+  const {addItem}=useCartStore()
 
   const fetchProduct = useCallback(async () => {
     setLoading(true);
     setError("");
+
     try {
-      const res = await fetch(`http://localhost:8080/user/products/single/${id}`);
-      if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+      if (!id) {
+        setError("Product ID not provided.");
+        return;
+      }
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/user/products/single/${id}`
+      );
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
       const data = await res.json();
       setProduct(data.product || data);
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Couldn't load product. Please try again.");
+      console.error("Error fetching product:", err);
+      setError("Failed to load product.");
     } finally {
       setLoading(false);
     }
@@ -32,107 +42,129 @@ const SingleProduct = () => {
   }, [fetchProduct]);
 
   const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingIndex = cart.findIndex(item => item._id === product._id);
+    if (!product) return;
 
-    if (existingIndex >= 0) {
-      cart[existingIndex].quantity += 1;
-    } else {
-      cart.push({ ...product, quantity: 1 });
-    }
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({
+      id: product._id || id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    });
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("storage"));
-    alert(`${product.title} added to cart!`);
+
+    // Navigate to cart page
+   
   };
 
-  if (loading)
+  // Loading UI
+  if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 animate-pulse p-6">
-        <div className="w-full max-w-4xl h-96 rounded-3xl bg-gray-300 shadow-lg" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 animate-pulse p-6">
+        <div className="w-full max-w-5xl flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg" />
+          <div className="w-full md:w-1/2 flex flex-col gap-4">
+            <div className="h-8 bg-gray-300 rounded"></div>
+            <div className="h-6 bg-gray-300 rounded"></div>
+            <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-10 bg-gray-300 rounded w-1/3"></div>
+          </div>
+        </div>
       </div>
     );
+  }
 
-  if (error)
+  // Error UI
+  if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-10 text-center">
-        <p className="text-xl font-semibold text-red-600">{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <p className="text-xl text-red-600 font-semibold mb-4">{error}</p>
         <button
           onClick={fetchProduct}
-          className="mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold px-6 py-3 rounded-full shadow-xl hover:scale-105 transition-transform"
+          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
         >
           Retry
         </button>
       </div>
     );
+  }
 
-  if (!product)
+  if (!product) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-2xl font-semibold text-gray-600">
-        No product found.
+      <div className="flex items-center justify-center min-h-screen p-6 text-xl text-red-500 font-semibold">
+        Product not found.
       </div>
     );
+  }
 
-  const { image, title, description, price, category, _id } = product;
+  const { image, title, description, price, category } = product;
 
-  return (
-    <div className="w-full min-h-screen flex justify-center items-start py-20 px-4 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
-      <div className="relative max-w-4xl w-full bg-white/80 backdrop-blur-lg border border-white/30 rounded-3xl shadow-2xl p-10 flex flex-col md:flex-row gap-10 transition-transform hover:scale-[1.01] duration-500">
-        
-        {/* Left: Image */}
-        <div className="flex-1 relative w-full md:w-1/2 h-96 rounded-2xl overflow-hidden shadow-lg">
+return (
+  <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-16 px-4">
+    <div className="max-w-6xl mx-auto bg-white/70 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 md:p-12">
+
+        {/* Product Image */}
+        <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6">
           <img
             src={image}
             alt={title}
-            className="w-full h-full object-contain transition-transform duration-700 transform hover:scale-110"
+            className="max-h-[480px] object-contain transition-transform duration-300 hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 via-purple-500/20 to-pink-500/20 pointer-events-none rounded-2xl" />
         </div>
 
-        {/* Right: Details */}
-        <div className="flex-1 flex flex-col justify-center gap-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 drop-shadow-lg">
-            {title}
-          </h1>
+        {/* Product Details */}
+        <div className="flex flex-col justify-between">
+          <div className="space-y-5">
+            <span className="inline-block text-sm uppercase tracking-wider text-gray-500">
+              {category?.title || "Uncategorized"}
+            </span>
 
-          <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
-            {description || "No description available."}
-          </p>
+            <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
+              {title}
+            </h1>
 
-          <p className="text-3xl font-bold text-indigo-600 mt-4">
-            ₹{price}
-          </p>
+            <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              ₹{price}
+            </p>
 
-          <p className="text-gray-500 text-lg">
-            Category: <span className="font-semibold text-gray-800">{category?.title || "No Category"}</span>
-          </p>
+            <p className="text-gray-600 leading-relaxed text-lg">
+              {description || "No description available."}
+            </p>
+          </div>
 
-          <div className="mt-6 flex flex-wrap gap-4">
-       <Link
-              to={`/Proceed`}
-              className="text-indigo-600 underline font-medium self-start"
-              onClick={()=>{
-                addToCart({
-                  id:_id,
-                  image:image,
-                  title:title,
-                  price:price
-                })
+          {/* Action Buttons */}
+          <div className="mt-10 flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => {
+                addItem({
+                  id: product._id,
+                  title,
+                  description,
+                  price,
+                  image,
+                  qty: 1,
+                });
+                navigate("/cart");
               }}
+              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 px-8 py-4 text-lg font-semibold text-black shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
             >
-              Add to cart
-            </Link>
-            
+              🛒 Add to Cart
+            </button>
 
-        
+            <Link
+              to={`/Proceed/${category?._id || ""}`}
+              className="flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-gray-800 hover:scale-[1.02] transition-all duration-300"
+            >
+              Buy now
+            </Link>
           </div>
         </div>
-
-        {/* Floating glow effect */}
-        <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 opacity-20 blur-3xl pointer-events-none"></div>
       </div>
     </div>
-  );
-};
+  </div>
+)};
 
 export default SingleProduct;

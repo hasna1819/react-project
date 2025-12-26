@@ -15,7 +15,7 @@ import Home from "../components/Home.jsx";
 import ProductTable from "./ProductTable.jsx";
 import CategoryPage from "./CategoryPage.jsx";
 import ProductDetail from "./ProductDetails.jsx";
-import SingleProduct from "./Singleproduct.jsx";
+import SingleProduct from "./SingleProduct.jsx";
 import Orderdetails from "./orderdetails.jsx";
 
 

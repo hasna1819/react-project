@@ -10,7 +10,7 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState("");
 
-  const PRODUCT_API = `http://localhost:8080/products/${id}`;
+  const PRODUCT_API = `http://localhost:8080/products`;
 
   const fetchProductDetails = async () => {
     try {
